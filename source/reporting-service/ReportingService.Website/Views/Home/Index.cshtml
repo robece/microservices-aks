@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Request Report";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Fill the form and submit it to receive the report in your email.</p>
+    <br />
+    @model ReportingService.Website.Domain.DispatchRequest
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+        {
+    @Html.AntiForgeryToken();
+    @Html.ValidationSummary(true);
+
+    @Html.LabelFor(m => m.Fullname)
+    <br />
+    @Html.TextBoxFor(m => m.Fullname)
+    <br />
+    @Html.LabelFor(m => m.Email)
+    <br />
+    @Html.TextBoxFor(m => m.Email)
+    <br /><br />
+    <input type="submit" value="Request Report" />
+    <br /><br />
+    <div style="color:orangered">
+        @Html.ValidationMessageFor(m => m.Fullname)
+        <br />
+        @Html.ValidationMessageFor(m => m.Email)
+    </div>
+        }
+</div>

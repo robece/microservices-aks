@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ReportingService.Processor": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
