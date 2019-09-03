@@ -1,0 +1,105 @@
+# Build and Deploy to Azure Kubernetes Service using HELM
+
+trigger:
+  branches:
+    include: 
+    - master
+  paths:
+    include: 
+    - source/reporting-service/ReportingService.Website
+    - source/reporting-service/ReportingService.Website.Domain
+
+pr: none
+
+variables:
+  projectName: reporting-service-website
+  chartName: reporting-service-website-chart
+  registryServerName: $(acrRegistryName).azurecr.io
+  version: 1.0.$(build.buildId)
+
+  # define 10 more variables in the build pipeline in UI: 
+  # 1. acrRegistryName
+  # 2. acrRegistryUsername
+  # 3. acrRegistryPassword
+  # 4. imagePullSecret
+  # 5. replicaCount
+  # 6. volumeSecretName
+  # 7. azureSubscriptionEndpoint
+  # 8. kubernetesClusterResourceGroup
+  # 9. kubernetesCluster
+  # 10. publicIP
+
+  # Agent VM image name
+  vmImageName: ubuntu-latest
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - bash: docker build -f source/reporting-service/ReportingService.Website/Dockerfile -t $(registryServerName)/$(projectName):$(version) source/reporting-service/
+      displayName: 'docker build'
+    - bash: |
+        docker login $(registryServerName) -u $(acrRegistryUsername) -p $(acrRegistryPassword)
+        docker push $(registryServerName)/$(projectName):$(version)
+      displayName: 'docker push'
+    - task: HelmInstaller@0
+      displayName: 'Install Helm 2.14.3'
+      inputs:
+        helmVersion: 2.14.3
+        checkLatestHelmVersion: false
+    - bash: 'helm init --client-only'
+      displayName: 'helm init --client-only'
+    - bash: 'helm package --version $(version) --app-version=$(version) --destination $(build.artifactStagingDirectory) $(system.defaultWorkingDirectory)/source/charts/$(chartName)'
+      displayName: 'helm package'
+    - bash: 'az acr helm push -n $(acrRegistryName) -u $(acrRegistryUsername) -p $(acrRegistryPassword) $(build.artifactStagingDirectory)/$(chartName)-$(version).tgz'
+      displayName: 'Bash: az acr helm push'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts: drop'
+
+- stage: Deploy
+  displayName: Deploy to Testing Environment
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: Testing Environment
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: HelmInstaller@0
+            displayName: 'Install Helm 2.14.3'
+            inputs:
+              helmVersion: 2.14.3
+              checkLatestHelmVersion: false
+          - task: HelmDeploy@0
+            displayName: 'helm init'
+            inputs:
+              connectionType: Azure Resource Manager
+              azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+              azureResourceGroup: $(kubernetesClusterResourceGroup)
+              kubernetesCluster: $(kubernetesCluster)
+              command: init
+              arguments: '--service-account tiller'
+          - bash: 'helm repo add $(acrRegistryName) https://$(acrRegistryName).azurecr.io/helm/v1/repo --username $(acrRegistryUsername) --password $(acrRegistryPassword)'
+            displayName: 'helm repo add'
+          - task: HelmDeploy@0
+            displayName: 'helm upgrade'
+            inputs:
+              connectionType: Azure Resource Manager
+              azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+              azureResourceGroup: $(kubernetesClusterResourceGroup)
+              kubernetesCluster: $(kubernetesCluster)
+              command: upgrade
+              waitForExecution: false
+              chartType: Name
+              chartName: $(acrRegistryName)/$(chartName)
+              releaseName: $(projectName)
+              arguments: '--install --version $(version) --set replicaCount=$(replicaCount) --set image.repository=$(acrRegistryName).azurecr.io/$(projectName) --set image.tag=$(version) --set ingress.enabled=false --set service.type=LoadBalancer --set service.publicip=$(publicIP) --set nameOverride=$(projectName) --set fullnameOverride=$(projectName) --set imagePullSecrets[0].name=$(imagePullSecret) --set volumes[0].name=secrets --set volumes[0].secret.secretName=$(volumeSecretName)'
