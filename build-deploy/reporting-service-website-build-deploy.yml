@@ -102,4 +102,4 @@ stages:
               chartType: Name
               chartName: $(acrRegistryName)/$(chartName)
               releaseName: $(projectName)
-              arguments: '--install --version $(version) --set replicaCount=$(replicaCount) --set image.repository=$(acrRegistryName).azurecr.io/$(projectName) --set image.tag=$(version) --set ingress.enabled=false --set service.type=LoadBalancer --set service.publicip=$(publicIP) --set nameOverride=$(projectName) --set fullnameOverride=$(projectName) --set imagePullSecrets[0].name=$(imagePullSecret) --set volumes[0].name=secrets --set volumes[0].secret.secretName=$(volumeSecretName)'
+              arguments: '--install --version $(version) --namespace=microservices-aks --set replicaCount=$(replicaCount) --set image.repository=$(acrRegistryName).azurecr.io/$(projectName) --set image.tag=$(version) --set ingress.enabled=false --set service.type=LoadBalancer --set service.publicip=$(publicIP) --set nameOverride=$(projectName) --set fullnameOverride=$(projectName) --set imagePullSecrets[0].name=$(imagePullSecret) --set volumes[0].name=secrets --set volumes[0].secret.secretName=$(volumeSecretName)'
