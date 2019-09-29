@@ -193,7 +193,7 @@ Step 9:
     6. The kind of cluster: with | without virtual nodes.
     ```
 
-    <b>Note:</b> If you use the script to create the Kubernetes Service resource, you have the possibility to create a cluster supporting virtual nodes, virtual nodes are not require in this challenge, but it will be use in the next virtual nodes challenge, otherwise, if you create the cluster without virtual nodes support you may need to create a new cluster and replicate all the steps of this challenge to proceed.
+    <b>Note:</b> If you use the script to create the Kubernetes Service resource, you have the possibility to create a cluster supporting virtual nodes, virtual nodes feature is not required in this challenge, if you create the cluster without virtual nodes support you may need to create a new cluster to perform other challenges.
 
     After the script execution remember to take note of the CALL TO ACTION annotation:
 
