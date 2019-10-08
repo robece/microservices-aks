@@ -1,0 +1,68 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "plan_name": {
+            "type": "string"
+        },
+        "plan_publisher": {
+            "type": "string"
+        },
+        "plan_product": {
+            "type": "string"
+        },
+        "plan_promotion_code": {
+            "type": "string"
+        },
+        "password": {
+            "type": "secureString"
+        },
+        "email": {
+            "type": "string"
+        },
+        "firstName": {
+            "type": "string"
+        },
+        "lastName": {
+            "type": "string"
+        },
+        "company": {
+            "type": "string"
+        },
+        "website": {
+            "type": "string"
+        },
+        "acceptMarketingEmails": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-01-01",
+            "name": "[parameters('name')]",
+            "type": "Sendgrid.Email/accounts",
+            "location": "[parameters('location')]",
+            "plan": {
+                "name": "[parameters('plan_name')]",
+                "publisher": "[parameters('plan_publisher')]",
+                "product": "[parameters('plan_product')]",
+                "promotionCode": "[parameters('plan_promotion_code')]"
+            },
+            "properties": {
+                "password": "[parameters('password')]",
+                "acceptMarketingEmails": "[parameters('acceptMarketingEmails')]",
+                "email": "[parameters('email')]",
+                "firstName": "[parameters('firstName')]",
+                "lastName": "[parameters('lastName')]",
+                "company": "[parameters('company')]",
+                "website": "[parameters('website')]"
+            }
+        }
+    ]
+}

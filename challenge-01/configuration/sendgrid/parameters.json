@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "value": ""
+        },
+        "location": {
+            "value": ""
+        },
+        "plan_name": {
+            "value": "free"
+        },
+        "plan_publisher": {
+            "value": "Sendgrid"
+        },
+        "plan_product": {
+            "value": "sendgrid_azure"
+        },
+        "plan_promotion_code": {
+            "value": ""
+        },
+        "password": {
+            "value": null
+        },
+        "email": {
+            "value": ""
+        },
+        "firstName": {
+            "value": ""
+        },
+        "lastName": {
+            "value": ""
+        },
+        "company": {
+            "value": ""
+        },
+        "website": {
+            "value": ""
+        },
+        "acceptMarketingEmails": {
+            "value": "0"
+        }
+    }
+}
