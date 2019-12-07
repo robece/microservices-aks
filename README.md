@@ -4,7 +4,8 @@ The Microservices-AKS hack is designed to foster learning via implementing Cloud
 
 ## Challenges
 
-1. <a href="challenge-01" target="_blank">Microservices CI/CD on Kubernetes Services</a>
+1. <a href="challenge-01" target="_blank">Microservices CI/CD on Azure Kubernetes Service</a>
+2. <a href="challenge-02" target="_blank">Ingress Controller on Azure Kubernetes Service</a>
 
 ## Feedback
 

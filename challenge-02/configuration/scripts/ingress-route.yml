@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-route
+  namespace: challenge-02
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - [NGINX_INGRESS_DNS].[CLUSTER_LOCATION].cloudapp.azure.com
+    secretName: certificate
+  rules:
+  - host: [NGINX_INGRESS_DNS].[CLUSTER_LOCATION].cloudapp.azure.com
+    http:
+      paths:
+      - path: /nginx
+        backend:
+          serviceName: nginx
+          servicePort: 80
+      - path: /httpd
+        backend:
+          serviceName: httpd
+          servicePort: 80
