@@ -230,12 +230,16 @@ Step 8:
     kubectl apply -f deployment-nginx.yml
     ```
 
+    <b>Having issues? </b> review the <a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/" target="_blank">cheat link!</a>
+
 Step 9:
 - In the same path <b>challenge-02/source</b> expose internally the deployment.
 
     ```bash
     kubectl expose deployment nginx --namespace challenge-02
     ```
+
+    <b>Having issues? </b> review the <a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/" target="_blank">cheat link!</a>
 
 Step 10:
 - Go to <b>challenge-02/source</b> and then deploy the nginx script directly in the cluster.
@@ -244,12 +248,16 @@ Step 10:
     kubectl apply -f deployment-httpd.yml
     ```
 
+    <b>Having issues? </b> review the <a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/" target="_blank">cheat link!</a>
+
 Step 11:
 - In the same path <b>challenge-02/source</b> expose internally the deployment.
 
     ```bash
     kubectl expose deployment httpd --namespace challenge-02
     ```
+
+    <b>Having issues? </b> review the <a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/" target="_blank">cheat link!</a>
 
 Step 12:
 - Let's deploy the ingress controller chart directly in the cluster using HELM 3. 
@@ -304,7 +312,7 @@ Step 12:
         helm3 uninstall [chartName] --namespace challenge-02
         ```
 
-    <b>Having issues? </b> review the <a href="https://docs.microsoft.com/en-us/azure/aks/ingress-basic" target="_blank">cheat link!</a>
+    <b>Having issues? </b> review the <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/" target="_blank">cheat link!</a>
 
 Step 13:
 - Let's deploy the cert-manager chart directly in the cluster using HELM 3.
@@ -377,7 +385,7 @@ Step 13:
     helm3 uninstall [chartName] --namespace cert-manager
     ```
 
-    <b>Having issues? </b> review the <a href="https://github.com/jetstack/cert-manager/tree/master/deploy/charts/cert-manager" target="_blank">cheat link!</a>    
+    <b>Having issues? </b> review the <a href="https://cert-manager.io/docs/" target="_blank">cheat link!</a>
 
 Step 14:
 - Go to <b>challenge-02/configuration/scripts</b> modify and run the following scripts.
@@ -453,6 +461,8 @@ Step 14:
         ```bash
         kubectl apply -f ingress-route.yml
         ```
+
+    <b>Having issues? </b> review the <a href="https://docs.microsoft.com/en-us/azure/aks/ingress-static-ip/" target="_blank">cheat link!</a>
 
 Step 15:
 - Congratulations, you are now able to navigate through your exposed secured ingress controller to access to the internal load balancers in the cluster for NGINX and Apache HTTP Server.
