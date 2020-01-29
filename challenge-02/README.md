@@ -159,69 +159,17 @@ Step 6:
     <b>Having issues? </b> review the <a href="https://www.assistanz.com/steps-to-create-custom-namespace-in-the-kubernetes/" target="_blank">cheat link!</a>
 
 Step 7:
-- <b>Install HELM 3</b> in the client by creating a file in a temporal folder with the name install-helm3.sh.
+- <b>Install HELM 3</b> by following the instructions here: <a href="https://helm.sh/docs/intro/install/" target="_blank">https://helm.sh/docs/intro/install/</a>.
 
-    For Linux:
-
-    ```bash
-    #!/bin/bash
-
-    set -eou pipefail
-
-    # set helm version
-    helmVersion='helm-v3.0.0-linux-amd64.tar.gz'
-    
-    # download helm version
-    wget https://get.helm.sh/$helmVersion
-    tar xvzf $helmVersion
-    
-    # move helm3 binary to local folder
-    sudo mv linux-amd64/helm /usr/bin/helm3
-
-    ```
-    
-    For MacOS:
+    To validate if helm was installed successfully, run the command: <b>helm version</b>.
 
     ```bash
-    #!/bin/bash
-
-    set -eou pipefail
-
-    # set helm version
-    helmVersion='helm-v3.0.0-darwin-amd64.tar.gz'
-
-    # download helm version
-    curl https://get.helm.sh/$helmVersion --output $helmVersion
-    tar -xvf $helmVersion
-
-    # move helm3 binary to local folder
-    sudo mv darwin-amd64/helm /usr/local/bin/helm3
-
-    ```
-
-    Run the bash file.
-
-    For Linux:
-
-    ```bash
-    sh ./install-helm3.sh
-    ```
-
-    For MacOS:
-
-    ```bash
-    sh install-helm3.sh
-    ```
-
-    To validate if helm3 was installed successfully, run the command: <b>helm3 version</b>.
-
-    ```bash
-    version.BuildInfo{Version:"v3.0.0", GitCommit:"e29ce2a54e96cd02ccfce88bee4f58bb6e2a28b6", GitTreeState:"clean", GoVersion:"go1.13.4"}
+    version.BuildInfo{Version:"v3.0.2", GitCommit:"e29ce2a54e96cd02ccfce88bee4f58bb6e2a28b6", GitTreeState:"clean", GoVersion:"go1.13.15"}
     ```
 
     Optional: If using Windows 10, use any linux bash shell or the cloud shell bash directly in the Azure Portal.
 
-    <b>Having issues? </b> review the <a href="https://alwaysupalwayson.blogspot.com/2019/11/helm-300-is-out.html" target="_blank">cheat link!</a>
+    <b>Having issues? </b> review the <a href="https://helm.sh/docs/" target="_blank">cheat link!</a>
 
 Step 8:
 - Go to <b>challenge-02/source</b> and then deploy the nginx script directly in the cluster.
@@ -265,19 +213,19 @@ Step 12:
     1. Add the Kubernetes charts repository.
 
         ```bash
-        helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/
+        helm repo add stable https://kubernetes-charts.storage.googleapis.com/
         ```
 
     2. Update helm repositories. 
         
         ```bash
-        helm3 repo update
+        helm repo update
         ```
 
     3. Install the ingress controller in the cluster. 
 
         ```bash
-        helm3 install --generate-name stable/nginx-ingress --set controller.replicaCount=2 --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux --version=1.26.2 --namespace challenge-02
+        helm install --generate-name stable/nginx-ingress --set controller.replicaCount=2 --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux --version=1.26.2 --namespace challenge-02
         ```
     
     4. Get ingress controller service external ip.
@@ -301,15 +249,15 @@ Step 12:
         ```
 
         ```bash
-        To see the charts deployed using helm3 in challenge-02 namespace:
+        To see the charts deployed using helm in challenge-02 namespace:
         
-        helm3 list --namespace challenge-02
+        helm list --namespace challenge-02
         ```
 
         ```bash
-        To remove a chart deployed using helm3 in challenge-02 namespace:
+        To remove a chart deployed using helm in challenge-02 namespace:
         
-        helm3 uninstall [chartName] --namespace challenge-02
+        helm uninstall [chartName] --namespace challenge-02
         ```
 
     <b>Having issues? </b> review the <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/" target="_blank">cheat link!</a>
@@ -332,19 +280,19 @@ Step 13:
     3. Add the Jetstack charts repository.
 
     ```bash
-    helm3 repo add jetstack https://charts.jetstack.io
+    helm repo add jetstack https://charts.jetstack.io
     ```
 
     4. Update helm repositories.
 
     ```bash
-    helm3 repo update
+    helm repo update
     ```
 
     5. Install the cert-manager in the cluster. 
 
     ```bash
-    helm3 install --generate-name jetstack/cert-manager --set nodeSelector."beta\.kubernetes\.io/os"=linux --set webhook.nodeSelector."beta\.kubernetes\.io/os"=linux --set cainjector.nodeSelector."beta\.kubernetes\.io/os"=linux --set ingressShim.defaultIssuerName=letsencrypt-prod --set ingressShim.defaultIssuerKind=ClusterIssuer --version v0.12.0 --namespace cert-manager
+    helm install --generate-name jetstack/cert-manager --set nodeSelector."beta\.kubernetes\.io/os"=linux --set webhook.nodeSelector."beta\.kubernetes\.io/os"=linux --set cainjector.nodeSelector."beta\.kubernetes\.io/os"=linux --set ingressShim.defaultIssuerName=letsencrypt-prod --set ingressShim.defaultIssuerKind=ClusterIssuer --version v0.12.0 --namespace cert-manager
     ```
 
     6. To validate the chart deployment use the following commands.
@@ -374,15 +322,15 @@ Step 13:
     ```
 
     ```bash
-    To see the charts deployed using helm3 in cert-manager namespace:
+    To see the charts deployed using helm in cert-manager namespace:
 
-    helm3 list --namespace cert-manager
+    helm list --namespace cert-manager
     ```
 
     ```bash
-    To remove a chart deployed using helm3 in cert-manager namespace:
+    To remove a chart deployed using helm in cert-manager namespace:
 
-    helm3 uninstall [chartName] --namespace cert-manager
+    helm uninstall [chartName] --namespace cert-manager
     ```
 
     <b>Having issues? </b> review the <a href="https://cert-manager.io/docs/" target="_blank">cheat link!</a>
