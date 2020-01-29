@@ -3,9 +3,8 @@ kind: Service
 metadata:
   name: {{ include "rabbitmq-chart.fullname" . }}
   labels:
-{{ include "rabbitmq-chart.labels" . | indent 4 }}
+    {{- include "rabbitmq-chart.labels" . | nindent 4 }}
 spec:
-  loadBalancerIP: {{ .Values.service.publicip }}
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port1 }}
@@ -17,5 +16,4 @@ spec:
       protocol: TCP
       name: port-2
   selector:
-    app.kubernetes.io/name: {{ include "rabbitmq-chart.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "rabbitmq-chart.selectorLabels" . | nindent 4 }}

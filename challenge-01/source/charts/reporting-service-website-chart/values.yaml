@@ -6,15 +6,32 @@ replicaCount:
 
 image:
   repository:
-  tag:
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
-nameOverride:
-fullnameOverride:
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
 
 service:
-  publicip:
-  type:
+  type: LoadBalancer
   port: 80
 
 ingress:
@@ -25,7 +42,6 @@ ingress:
   hosts:
     - host: chart-example.local
       paths: []
-
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -52,10 +68,8 @@ volumeMounts:
 
 nodeSelector: {}
 
-affinity: {}
-
 tolerations: []
 
-imagePullSecrets: []
+affinity: {}
 
 volumes: []

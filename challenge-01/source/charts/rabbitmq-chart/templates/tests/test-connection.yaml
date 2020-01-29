@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: "{{ include "rabbitmq-chart.fullname" . }}-test-connection"
   labels:
-{{ include "rabbitmq-chart.labels" . | indent 4 }}
+{{ include "rabbitmq-chart.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test-success
 spec:

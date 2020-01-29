@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: "{{ include "reporting-service-api-chart.fullname" . }}-test-connection"
   labels:
-{{ include "reporting-service-api-chart.labels" . | indent 4 }}
+{{ include "reporting-service-api-chart.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test-success
 spec:

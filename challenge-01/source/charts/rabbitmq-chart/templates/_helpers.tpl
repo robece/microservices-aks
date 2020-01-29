@@ -35,11 +35,29 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "rabbitmq-chart.labels" -}}
-app.kubernetes.io/name: {{ include "rabbitmq-chart.name" . }}
 helm.sh/chart: {{ include "rabbitmq-chart.chart" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+{{ include "rabbitmq-chart.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Selector labels
+*/}}
+{{- define "rabbitmq-chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "rabbitmq-chart.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "rabbitmq-chart.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+    {{ default (include "rabbitmq-chart.fullname" .) .Values.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.serviceAccount.name }}
+{{- end -}}
 {{- end -}}

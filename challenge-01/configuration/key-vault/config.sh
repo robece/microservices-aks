@@ -22,7 +22,7 @@ ConfigureAzureSubscription ()
     az login
   
     echo "Validate the default subscription to work:"
-    az account list 
+    az account list
 
     read -p "Copy and paste the id of the validated subscription to work: " subscriptionId
     az account set --subscription $subscriptionId

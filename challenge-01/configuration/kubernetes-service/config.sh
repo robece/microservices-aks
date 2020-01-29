@@ -23,7 +23,7 @@ ConfigureAzureSubscription ()
     az login
   
     echo "Validate the default subscription to work:"
-    az account list 
+    az account list
 
     read -p "Copy and paste the id of the validated subscription to work: " subscriptionId
     az account set --subscription $subscriptionId
@@ -50,10 +50,10 @@ ConfigureAKS ()
     read -p "Introduce the number of nodes in the cluster: " AKSClusterNodes
     read -p "Introduce the VM size for the nodes (e.g. Standard_D2s_v3): " AKSClusterVMSize
 
-    ConfigureAKSVirtualNodesWithoutVirtualNodes
+    ConfigureAKSCluster
 }
 
-ConfigureAKSVirtualNodesWithoutVirtualNodes ()
+ConfigureAKSCluster ()
 {
     # create service principal to cluster
     az ad sp create-for-rbac -n $AKSClusterName
@@ -64,8 +64,8 @@ ConfigureAKSVirtualNodesWithoutVirtualNodes ()
     # reset service principal password
     AKSClusterServicePrincipalPassword=$(az ad sp credential reset --name $AKSClusterName --query password -o tsv)
 
-    # wait 4 minutes for propagation
-    sleep 4m
+    # wait 2 minutes for propagation
+    sleep 2m
 
     # create aks cluster
     az aks create \
@@ -75,19 +75,15 @@ ConfigureAKSVirtualNodesWithoutVirtualNodes ()
     --node-vm-size $AKSClusterVMSize \
     --generate-ssh-keys \
     --service-principal $AKSClusterServicePrincipalAppId \
-    --client-secret $AKSClusterServicePrincipalPassword
+    --client-secret $AKSClusterServicePrincipalPassword \
+    --enable-vmss \
+    --kubernetes-version 1.13.12
 
     # download .kube config to client machine
     az aks get-credentials --resource-group $AKSResourceGroupName --name $AKSClusterName
 
     # assign permissions to dashboard
     kubectl create clusterrolebinding kubernetes-dashboard -n kube-system --clusterrole=cluster-admin --serviceaccount=kube-system:kubernetes-dashboard
-
-    # create the service account and role binding
-    kubectl apply -f helm-rbac.yml
-
-    # init helm
-    helm init --service-account tiller --node-selectors "beta.kubernetes.io/os"="linux"
 
     echo ""
     echo "Congratulations!! the Kubernetes Service resource is ready to be used"

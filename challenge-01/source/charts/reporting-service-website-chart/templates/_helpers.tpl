@@ -35,11 +35,29 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "reporting-service-website-chart.labels" -}}
-app.kubernetes.io/name: {{ include "reporting-service-website-chart.name" . }}
 helm.sh/chart: {{ include "reporting-service-website-chart.chart" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+{{ include "reporting-service-website-chart.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Selector labels
+*/}}
+{{- define "reporting-service-website-chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "reporting-service-website-chart.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "reporting-service-website-chart.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+    {{ default (include "reporting-service-website-chart.fullname" .) .Values.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.serviceAccount.name }}
+{{- end -}}
 {{- end -}}
