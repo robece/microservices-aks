@@ -57,6 +57,9 @@ ConfigureSendGrid ()
 
 CreateSendGridAccount ()
 {
+    # accept terms
+    az vm image accept-terms --publisher Sendgrid --offer sendgrid_azure --plan free
+
     # create a deployment from a local template, using a local parameter file, a remote parameter file, and selectively overriding key/value pairs
     az group deployment create -g $SendGridResourceGroupName --template-file deployment.json \
     --parameters @parameters.json --parameters name=$SendGridAccountName location=$SendGridResourceGroupLocation password=$SendGridPassword email=$SendGridEmailCreator firstName=$SendGridFirstnameCreator lastName=$SendGridLastnameCreator
