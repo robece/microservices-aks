@@ -30,6 +30,9 @@ ConfigureAzureSubscription ()
 
     echo "The subscription selected is: "
     az account show
+	
+	#accept terms
+	az vm image terms accept --publisher Sendgrid --offer sendgrid_azure --plan free
 
     read -p "Is that correct? (yes/no): " answer
 
