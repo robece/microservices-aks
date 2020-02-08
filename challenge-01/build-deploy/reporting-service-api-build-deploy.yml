@@ -59,7 +59,7 @@ stages:
             displayName: "helm3 package"
           - bash: "az acr helm push -n $(acrRegistryName) -u $(acrRegistryUsername) -p $(acrRegistryPassword) $(build.artifactStagingDirectory)/$(chartName)-$(version).tgz"
             displayName: "az acr helm push"
-          - task: PublishBuildArtifacts@1
+          - task: PublishPipelineArtifact@1
             displayName: "publish artifacts: drop"
 
   - stage: Deploy
