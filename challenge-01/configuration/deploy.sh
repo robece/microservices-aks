@@ -54,7 +54,6 @@ az aks create \
     --name $AKSClusterName \
     --resource-group $ResourceGroupName \
     --node-count 1 \
-    --enable-vmss \
     --kubernetes-version $AKSK8sVersion \
     --node-resource-group $AKSResourceNodeGroupName \
     --generate-ssh-keys
