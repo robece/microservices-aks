@@ -67,7 +67,7 @@ echo "Assignning Contributor role ..."
 # Need to wait a couple seconds to SP propagate around the services
 az role assignment create --assignee $SP_APP_ID --scope $ACR_ID --role "Contributor"
 
-sleep 1m
+sleep 2m
 
 # PRINT
 echo "*******************************************"
