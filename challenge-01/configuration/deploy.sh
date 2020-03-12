@@ -63,7 +63,7 @@ echo "Assignning Contributor role ..."
 # Need to wait a couple seconds to SP propagate around the services
 az role assignment create --assignee $SP_APP_ID --scope $ACR_ID --role "Contributor"
 
-TenantName=$(az account show --query 'user.name' | cut -d '@' -f 2 | sed 's/\"//')
+sleep 1m
 
 # PRINT
 echo "*******************************************"
@@ -173,6 +173,5 @@ echo "Take note of the KeyVaultIdentifier: https://"$KeyVaultAccountName".vault.
 echo "Take note of the KeyVaultEncryptionKey: ENCRYPTION-KEY"
 echo "Take note of the ServicePrincipalCICD: http://"$ServicePrincipalCICD
 echo "Take note of the ServicePrincipalCICDPassword: "$ServicePrincipalCICDPassword
-echo "Take note of the TenantName: "$TenantName
 echo ""
 echo "****************************CALL TO ACTION****************************"
