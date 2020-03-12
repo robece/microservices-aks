@@ -5,7 +5,7 @@ clear
 
 read -p "Introduce a lowercase unique alias for your deployment (max length suggested of 6 chars): " DeploymentAlias
 read -p "Introduce your email address in lowercase for your deployment: " EmailAddress
-ResourceGroupName=$DeploymentAlias
+ResourceGroupName=$DeploymentAlias"-workshop"
 Location="westus2"
 AKSClusterName=$DeploymentAlias"aks01"
 AKSK8sVersion="1.14.8"
