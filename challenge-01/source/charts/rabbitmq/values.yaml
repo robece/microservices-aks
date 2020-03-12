@@ -1,0 +1,14 @@
+service:
+  port1: 15672
+  targetPort1: 15672
+  port2: 5672
+  targetPort2: 5672
+
+deployment:
+  replicas: 1
+  image:
+    registry: challenge-01.azurecr.io
+    tag: 1.0.0
+    pullPolicy: Always
+  containerPort1: 15672
+  containerPort2: 5672

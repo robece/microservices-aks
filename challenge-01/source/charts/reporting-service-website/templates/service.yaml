@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: reporting-service-website
+  namespace: {{.Release.Namespace}}
+  labels:
+    app: reporting-service-website
+spec:
+  selector:
+    app: reporting-service-website
+  ports:
+    - protocol: TCP
+      port: {{.Values.service.port}}
+      targetPort: {{.Values.service.targetPort}}
+  type: LoadBalancer

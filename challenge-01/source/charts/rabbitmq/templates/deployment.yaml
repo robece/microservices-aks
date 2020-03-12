@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: {{.Release.Namespace}}
+  labels:
+    app: rabbitmq
+spec:
+  replicas: {{.Values.deployment.replicas}}
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: "{{.Values.deployment.image.registry}}/challenge-01/rabbitmq:{{.Values.deployment.image.tag}}"
+          ports:
+            - containerPort: {{.Values.deployment.containerPort1}}
+            - containerPort: {{.Values.deployment.containerPort2}}
+          imagePullPolicy: {{.Values.deployment.image.pullPolicy}}

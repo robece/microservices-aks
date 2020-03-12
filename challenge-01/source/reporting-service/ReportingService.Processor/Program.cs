@@ -205,7 +205,7 @@ namespace ReportingService.Processor
             {
                 Console.WriteLine("Exit");
 
-                // allow the manin thread to continue and exit...
+                // allow the main thread to continue and exit...
                 waitHandle.Set();
             };
 

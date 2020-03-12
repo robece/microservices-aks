@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-service-website
+  namespace: {{.Release.Namespace}}
+  labels:
+    app: reporting-service-website
+spec:
+  replicas: {{.Values.deployment.replicas}}
+  selector:
+    matchLabels:
+      app: reporting-service-website
+  template:
+    metadata:
+      labels:
+        app: reporting-service-website
+    spec:
+      containers:
+        - name: reporting-service-website
+          image: "{{.Values.deployment.image.registry}}/challenge-01/reporting-service-website:{{.Values.deployment.image.tag}}"
+          ports:
+            - containerPort: {{.Values.deployment.containerPort}}
+          imagePullPolicy: {{.Values.deployment.image.pullPolicy}}
+          volumeMounts:
+            {{- toYaml .Values.deployment.volumeMounts | nindent 12 }}
+    {{- with .Values.deployment.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

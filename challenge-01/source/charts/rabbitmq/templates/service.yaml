@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rabbitmq
+  namespace: {{.Release.Namespace}}
+  labels:
+    app: rabbitmq
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - protocol: TCP
+      port: {{.Values.service.port1}}
+      targetPort: {{.Values.service.targetPort1}}
+    - protocol: TCP
+      port: {{.Values.service.port2}}
+      targetPort: {{.Values.service.targetPort2}}
+  type: ClusterIP
