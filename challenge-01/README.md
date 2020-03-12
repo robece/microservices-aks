@@ -49,7 +49,7 @@ Development:
     <img src="/challenge-01/resources/images/orchestration-architecture.png" width="600" />
 </div>
 
-## Leverage Azure DevOps / GitHub
+## Leverage Azure DevOps / GitHub Actions
 
 You could also leverage Azure DevOps or GitHub Actions to implement a CI/CD pipeline for each app. For that need to create a new Azure build pipeline per app by using the associated yaml definition located in the build-deploy folder.
 
