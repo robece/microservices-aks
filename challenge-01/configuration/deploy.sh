@@ -43,8 +43,6 @@ az acr create -n $ContainerRegistryName -g $ResourceGroupName --sku basic --admi
 # get container registry id
 ContainerRegistryId=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
 
-sleep 30
-
 # PRINT
 echo "*******************************************"
 echo "        CREATING: AKS CLUSTER"
