@@ -37,7 +37,6 @@ Development:
 3. Azure DevOps free account (<a href="https://dev.azure.com/" target="_blank">https://dev.azure.com/</a>)
 4. .Net Core 3.0 Installed (<a href="https://www.microsoft.com/net/download" target="_blank">https://www.microsoft.com/net/download</a>)
 5. Git for Windows, Linux or MacOS are optional (<a href="https://git-scm.com/downloads" target="_blank">https://git-scm.com/downloads</a>)
-6. Docker Desktop (<a href="https://www.docker.com/get-started" target="_blank">https://www.docker.com/get-started</a>). For for older Mac and Windows systems that do not meet the requirements of <a href="https://docs.docker.com/docker-for-mac/" target="_blank">Docker Desktop for Mac</a> and <a href="https://docs.docker.com/docker-for-windows/" target="_blank">Docker Desktop for Windows</a> you could use <a href="https://docs.docker.com/toolbox/toolbox_install_windows/" target="_blank">Docker Toolbox</a>.
 
 ## Architecture
 
@@ -51,7 +50,7 @@ Development:
 
 ## Leverage Azure DevOps / GitHub Actions
 
-You could also leverage Azure DevOps or GitHub Actions to implement a CI/CD pipeline for each app. For that need to create a new Azure build pipeline per app by using the associated yaml definition located in the build-deploy folder.
+You could also leverage Azure DevOps or GitHub Actions to implement a CI/CD pipeline for each app.
 
 <div style="text-align:center">
     <img src="/challenge-01/resources/images/devops-ci-cd-pipelines.png" width="600" />
@@ -83,13 +82,13 @@ Is this your first time using RabbitMQ?, review the following links:
 
 1. The website must be running and needs to be exposed in a specific public ip address.
 
-2. The api must be running and needs to be exposed in a specific cluster ip address.
+2. The api must be running and needs to be exposed in a specific cluster ip with fully qualified domain name (FQDN).
 
-3. The rabbitmq must be running and needs to be exposed in a specific cluster ip address.
+3. The rabbitmq must be running and needs to be exposed in a specific cluster ip with fully qualified domain name (FQDN).
 
-4. The processor must be running it doesn't need any internet exposure with a public ip, but can be monitored using the Kubernetes dashboard.
+4. The processor must be running it doesn't need any exposure to internet and can be monitored using the Kubernetes dashboard.
 
-5. Solution must be working as expected, website sends a request to the API, the API queue a message, the processor dequeue the message then creates a PDF file, save the information in CosmosDB and send the file back to the user who filled the website form.
+5. Solution must be working as expected, this means the website should be able to send a request to the API, the API should queue a message, the processor dequeue the message then creates a PDF file, save the information in CosmosDB and send the file attached in an email to the user who filled the website form.
 
 6. Each application must be deployed in Kubernetes Service as a HELM chart.
 
@@ -103,7 +102,6 @@ Step 1:
 - Sign in to <a href="https://portal.azure.com" target="_blank">Azure Portal </a> and open the cloud shell bash or use the <a href="https://shell.azure.com/bash" target="_blank">Azure Cloud Shell</a>.
 
     <b>Having issues? </b> review the <a href="https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/cloud-shell/overview.md" target="_blank">cheat link!</a>
-
 
 Step 2:
 - Using the cloud shell bash clone the GitHub repo.
@@ -191,7 +189,7 @@ Step 5:
     <b>Having issues? </b> review the <a href="https://www.assistanz.com/steps-to-create-custom-namespace-in-the-kubernetes/" target="_blank">cheat link!</a>
 
 Step 6:
-- <b>Install HELM 3</b> by following the instructions here: <a href="https://helm.sh/docs/intro/install/" target="_blank">https://helm.sh/docs/intro/install/</a>.
+- <b>Install HELM 3</b> if it's not installed by following the instructions here: <a href="https://helm.sh/docs/intro/install/" target="_blank">https://helm.sh/docs/intro/install/</a>.
 
     To validate if helm was installed successfully, run the command: <b>helm version</b>.
 
@@ -328,7 +326,7 @@ Step 9:
     ```
     [RabbitMQUsername] = guest
     [RabbitMQPassword] = guest
-    [RabbitMQHostname] = rabbitmq service cluster ip address (previously defined)
+    [RabbitMQHostname] = rabbitmq.challenge-01.svc.cluster.local
     [RabbitMQPort] = 5672
     [DispatchQueueName] = dispatch
     [KeyVaultCertificateName] = key vault certificate name (previously defined)
@@ -472,7 +470,7 @@ Step 12:
     [ReportCollection] = report
     [RabbitMQUsername] = guest
     [RabbitMQPassword] = guest
-    [RabbitMQHostname] = rabbitmq service cluster ip address (previously defined)
+    [RabbitMQHostname] = rabbitmq.challenge-01.svc.cluster.local
     [RabbitMQPort] = 5672
     [DispatchQueueName] = dispatch
     [KeyVaultCertificateName] = key vault certificate name (previously defined)
@@ -598,7 +596,7 @@ Step 14:
     Set the values:
 
     ```
-    [APIHostname] = api service cluster ip address (previously defined)
+    [APIHostname] = reporting-service-api.challenge-01.svc.cluster.local
     ```
 
 - In the same path folder execute.
