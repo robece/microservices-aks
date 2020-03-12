@@ -23,6 +23,7 @@ SendGridFirstnameCreator="guest"
 SendGridLastnameCreator="guest"
 SendGridCompanyCreator="guest"
 SendGridWebsiteCreator="http://guest.com"
+ServicePrincipalCICD=$DeploymentAlias"SP"
 
 # PRINT
 echo "*******************************************"
@@ -133,6 +134,28 @@ az vm image terms accept --publisher Sendgrid --offer sendgrid_azure --plan free
 az group deployment create -g $ResourceGroupName --template-file sendgrid.json \
 --parameters @sendgrid-parameters.json --parameters name=$SendGridAccountName location=$Location password=$SendGridPassword email=$SendGridEmailCreator firstName=$SendGridFirstnameCreator lastName=$SendGridLastnameCreator company=$SendGridCompanyCreator website=$SendGridWebsiteCreator
 
+# PRINT
+echo "*******************************************"
+echo "        CREATING: SERVICE PRINCIPAL"
+echo "*******************************************"
+
+# Get ACR ID 
+ACR_ID=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
+
+echo "Creating Service Principal ..."
+az ad sp create-for-rbac -n $ServicePrincipalCICD --skip-assignment
+
+ServicePrincipalCICDPassword=$(az ad sp credential reset --name $AKSClusterName --query password -o tsv)
+
+#Get appId
+SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
+
+echo "Assignning Contributor role ..." 
+# Need to wait a couple seconds to SP propagate around the services
+az role assignment create --assignee $SP_APP_ID --scope $ACR_ID --role "Contributor"
+
+TenantName=$(az account show --query 'user.name' | cut -d '@' -f 2 | sed 's/\"//')
+
 echo ""
 echo "****************************CALL TO ACTION****************************"
 echo ""
@@ -149,5 +172,8 @@ echo "Take note of the KeyVaultClientId: "$KeyVaultApplicationAppId
 echo "Take note of the KeyVaultClientSecret: "$KeyVaultClientSecretPassword
 echo "Take note of the KeyVaultIdentifier: https://"$KeyVaultAccountName".vault.azure.net"
 echo "Take note of the KeyVaultEncryptionKey: ENCRYPTION-KEY"
+echo "Take note of the ServicePrincipalCICD: http://"$ServicePrincipalCICD
+echo "Take note of the ServicePrincipalCICDPassword: "$ServicePrincipalCICDPassword
+echo "Take note of the TenantName: "$TenantName
 echo ""
 echo "****************************CALL TO ACTION****************************"
