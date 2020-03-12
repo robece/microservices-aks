@@ -6,7 +6,7 @@ clear
 read -p "Introduce a lowercase unique alias for your deployment (max length suggested of 6 chars): " DeploymentAlias
 read -p "Introduce your email address in lowercase for your deployment: " EmailAddress
 ResourceGroupName=$DeploymentAlias"-workshop"
-Location="eastus2"
+Location="westus2"
 AKSClusterName=$DeploymentAlias"aks01"
 AKSK8sVersion="1.14.8"
 ContainerRegistryName=$DeploymentAlias"cr01"
@@ -45,6 +45,28 @@ ContainerRegistryId=$(az acr show -n $ContainerRegistryName -g $ResourceGroupNam
 
 # PRINT
 echo "*******************************************"
+echo "        CREATING: SERVICE PRINCIPAL"
+echo "*******************************************"
+
+# Get ACR ID 
+ACR_ID=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
+
+echo "Creating Service Principal ..."
+az ad sp create-for-rbac -n $ServicePrincipalCICD --skip-assignment
+
+ServicePrincipalCICDPassword=$(az ad sp credential reset --name $AKSClusterName --query password -o tsv)
+
+#Get appId
+SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
+
+echo "Assignning Contributor role ..." 
+# Need to wait a couple seconds to SP propagate around the services
+az role assignment create --assignee $SP_APP_ID --scope $ACR_ID --role "Contributor"
+
+TenantName=$(az account show --query 'user.name' | cut -d '@' -f 2 | sed 's/\"//')
+
+# PRINT
+echo "*******************************************"
 echo "        CREATING: AKS CLUSTER"
 echo "*******************************************"
 
@@ -54,6 +76,8 @@ az aks create \
     --resource-group $ResourceGroupName \
     --node-count 1 \
     --kubernetes-version $AKSK8sVersion \
+    --service-principal $ServicePrincipalCICD \
+    --client-secret $ServicePrincipalCICDPassword \
     --generate-ssh-keys
 
 # update cluster
@@ -130,28 +154,6 @@ az vm image terms accept --publisher Sendgrid --offer sendgrid_azure --plan free
 # create a deployment from a local template, using a local parameter file, a remote parameter file, and selectively overriding key/value pairs
 az group deployment create -g $ResourceGroupName --template-file sendgrid.json \
 --parameters @sendgrid-parameters.json --parameters name=$SendGridAccountName location=$Location password=$SendGridPassword email=$SendGridEmailCreator firstName=$SendGridFirstnameCreator lastName=$SendGridLastnameCreator company=$SendGridCompanyCreator website=$SendGridWebsiteCreator
-
-# PRINT
-echo "*******************************************"
-echo "        CREATING: SERVICE PRINCIPAL"
-echo "*******************************************"
-
-# Get ACR ID 
-ACR_ID=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
-
-echo "Creating Service Principal ..."
-az ad sp create-for-rbac -n $ServicePrincipalCICD --skip-assignment
-
-ServicePrincipalCICDPassword=$(az ad sp credential reset --name $AKSClusterName --query password -o tsv)
-
-#Get appId
-SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
-
-echo "Assignning Contributor role ..." 
-# Need to wait a couple seconds to SP propagate around the services
-az role assignment create --assignee $SP_APP_ID --scope $ACR_ID --role "Contributor"
-
-TenantName=$(az account show --query 'user.name' | cut -d '@' -f 2 | sed 's/\"//')
 
 echo ""
 echo "****************************CALL TO ACTION****************************"
