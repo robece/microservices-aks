@@ -7,7 +7,6 @@ read -p "Introduce a lowercase unique alias for your deployment (max length sugg
 read -p "Introduce your email address in lowercase for your deployment: " EmailAddress
 ResourceGroupName=$DeploymentAlias"-workshop"
 Location="westus2"
-AKSResourceNodeGroupName=$DeploymentAlias"-workshop-node-group"
 AKSClusterName=$DeploymentAlias"aks01"
 AKSK8sVersion="1.14.8"
 ContainerRegistryName=$DeploymentAlias"cr01"
@@ -55,7 +54,6 @@ az aks create \
     --resource-group $ResourceGroupName \
     --node-count 1 \
     --kubernetes-version $AKSK8sVersion \
-    --node-resource-group $AKSResourceNodeGroupName \
     --generate-ssh-keys
 
 # update cluster
