@@ -147,7 +147,7 @@ Step 3:
 
     1. CosmosDB account with MongoDB database (<a href="https://docs.microsoft.com/en-us/azure/cosmos-db/create-cosmosdb-resources-portal" target="_blank">cheat link!</a>)
     2. Azure Container Registry (<a href="https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal" target="_blank">cheat link!</a>)
-    3. Azure Key Vault (<a href="/challenge-01/resources/docs/KeyVault-for-Microservices.md" target="_blank">cheat link!</a>)
+    3. Azure Key Vault with custom secrets (<a href="/challenge-01/resources/docs/KeyVault-for-Microservices.md" target="_blank">cheat link!</a>)
     4. Azure Kubernetes Service (<a href="https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough" target="_blank">cheat link!</a>)
     5. Sendgrid account (<a href="https://docs.microsoft.com/en-us/azure/sendgrid-dotnet-how-to-send-email" target="_blank">cheat link!</a>)
 

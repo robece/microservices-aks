@@ -1,0 +1,84 @@
+# Build and Deploy to Azure Kubernetes Service using HELM
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - challenge-01/source/reporting-service/ReportingService.Api
+      - challenge-01/source/reporting-service/ReportingService.Api.Domain
+
+pr: none
+
+variables:
+  version: 1.0.$(build.buildId)
+  vm_image: ubuntu-latest
+
+# define 7 more variables in the build pipeline in UI:
+# 1. service_principal
+# 2. service_principal_password
+# 3. tenant
+# 4. registry
+# 5. registry_server
+# 6. cluster_name
+# 7. cluster_group
+# 8. volume_secret_name
+
+stages:
+  - stage: Build
+    displayName: Build Stage
+    jobs:
+      - job: Build
+        displayName: Build Job
+        pool:
+          vmImage: $(vm_image)
+        steps:
+          - bash: "az login --service-principal -u $(service_principal) -p $(service_principal_password) --tenant $(tenant)"
+            displayName: "az login"
+          - bash: "az acr build -f challenge-01/source/reporting-service/ReportingService.Api/Dockerfile -t $(registry_server)/challenge-01/reporting-service-api:$(version) -r $(registry) challenge-01/source/reporting-service"
+            displayName: "az acr build"
+          - bash: |
+              set -eou pipefail
+              curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+              chmod 700 get_helm.sh
+              ./get_helm.sh
+              helm version
+            displayName: "helm configuration"
+          - bash: "helm package --version $(version) --app-version=$(version) --destination $(build.artifactStagingDirectory) $(system.defaultWorkingDirectory)/challenge-01/source/charts/reporting-service-api"
+            displayName: "helm package"
+          - bash: "az acr helm push -n $(registry) $(build.artifactStagingDirectory)/reporting-service-api-$(version).tgz"
+            displayName: "az acr helm push"
+          - task: PublishPipelineArtifact@1
+            displayName: "publish artifacts: drop"
+
+  - stage: Deploy
+    displayName: Deploy Stage
+    dependsOn: Build
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy Job
+        pool:
+          vmImage: $(vm_image)
+        environment: Testing Environment
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - bash: "az login --service-principal -u $(service_principal) -p $(service_principal_password) --tenant $(tenant)"
+                  displayName: "az login"
+                - bash: |
+                    set -eou pipefail
+                    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+                    chmod 700 get_helm.sh
+                    ./get_helm.sh
+                    helm version
+                  displayName: "helm configuration"
+                - bash: "helm repo add $(registry) https://$(registry_server)/helm/v1/repo --username $(registry_username) --password $(registry_password)"
+                  displayName: "helm repo add"
+                - bash: "az aks get-credentials --name $(cluster_name) --resource-group $(cluster_group)"
+                  displayName: "az aks get-credentials"
+                - bash: "kubectl apply -f $(system.defaultWorkingDirectory)/deploy/namespace.yaml"
+                  displayName: "kubectl create namespace"
+                - bash: "helm upgrade --install --version reporting-service-api $(registry)/reporting-service-api --namespace=challenge-01 --set deployment.replicas=1 --set deployment.image.registry=$(registry_server) --set deployment.image.tag=$(version) --set deployment.volumes[0].name=secrets --set deployment.volumes[0].secret.secretName=$(volume_secret_name)"
+                  displayName: "helm upgrade or install"
