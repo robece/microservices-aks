@@ -54,7 +54,7 @@ ACR_ID=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id 
 echo "Creating Service Principal ..."
 az ad sp create-for-rbac -n $ServicePrincipalCICD --skip-assignment
 
-ServicePrincipalCICDPassword=$(az ad sp credential reset --name $AKSClusterName --query password -o tsv)
+ServicePrincipalCICDPassword=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
 
 #Get appId
 SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
