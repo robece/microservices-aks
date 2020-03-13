@@ -58,7 +58,7 @@ sleep 2m
 
 ServicePrincipalCICDPassword=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
 
-sleep 4m
+sleep 2m
 
 #Get appId
 SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
