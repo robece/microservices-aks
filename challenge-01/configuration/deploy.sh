@@ -22,7 +22,7 @@ SendGridFirstnameCreator="guest"
 SendGridLastnameCreator="guest"
 SendGridCompanyCreator="guest"
 SendGridWebsiteCreator="http://guest.com"
-ServicePrincipalCICD=$DeploymentAlias"sp01"
+ServicePrincipal=$DeploymentAlias"sp01"
 
 # PRINT
 echo "*******************************************"
@@ -30,14 +30,14 @@ echo "        CREATING: SERVICE PRINCIPAL"
 echo "*******************************************"
 
 echo "Creating service principal ..."
-az ad sp create-for-rbac -n $ServicePrincipalCICD
+az ad sp create-for-rbac -n $ServicePrincipal
 
 # get app id
-SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
+SP_APP_ID=$(az ad sp show --id http://$ServicePrincipal --query appId -o tsv)
 echo "Service Principal AppId: "$SP_APP_ID
 
 # updating password
-SP_APP_PASSWORD=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
+SP_APP_PASSWORD=$(az ad sp credential reset --name $ServicePrincipal --query password -o tsv)
 echo "Service Principal Password: "$SP_APP_PASSWORD
 
 # PRINT
@@ -121,14 +121,8 @@ echo "*******************************************"
 echo "          CREATING: KEY VAULT"
 echo "*******************************************"
 
-# create service principal to key vault
-az ad sp create-for-rbac -n $KeyVaultAccountName
-
-# get service principal id
-KeyVaultApplicationAppId=$(az ad sp list --display-name $KeyVaultAccountName --query "[].appId" -o tsv)
-
 # update the AAD application
-az ad app update --id $KeyVaultApplicationAppId \
+az ad app update --id $SP_APP_ID \
 --reply-urls "http://localhost" --credential-description "CLIENT_SECRET" \
 --password $KeyVaultClientSecretPassword --oauth2-allow-implicit-flow false
 
@@ -146,7 +140,7 @@ KeyVaultCertificateName=$KeyVaultAccountName"-cert"
 az keyvault certificate create --vault-name $KeyVaultAccountName --name $KeyVaultCertificateName  -p "$(az keyvault certificate get-default-policy)"
 
 # add policy to Key Vault account
-az keyvault set-policy --name $KeyVaultAccountName --spn $KeyVaultApplicationAppId \
+az keyvault set-policy --name $KeyVaultAccountName --spn $SP_APP_ID \
     --secret-permissions get list set delete recover backup restore
 
 # PRINT
@@ -158,7 +152,7 @@ echo "*******************************************"
 az vm image terms accept --publisher Sendgrid --offer sendgrid_azure --plan free
 
 # create a deployment from a local template, using a local parameter file, a remote parameter file, and selectively overriding key/value pairs
-az group deployment create -g $ResourceGroupName --template-file sendgrid.json \
+az deployment group create -g $ResourceGroupName --template-file sendgrid.json \
 --parameters @sendgrid-parameters.json --parameters name=$SendGridAccountName location=$Location password=$SendGridPassword email=$SendGridEmailCreator firstName=$SendGridFirstnameCreator lastName=$SendGridLastnameCreator company=$SendGridCompanyCreator website=$SendGridWebsiteCreator
 
 echo ""
@@ -177,7 +171,7 @@ echo "Take note of the KeyVaultClientId: "$KeyVaultApplicationAppId
 echo "Take note of the KeyVaultClientSecret: "$KeyVaultClientSecretPassword
 echo "Take note of the KeyVaultIdentifier: https://"$KeyVaultAccountName".vault.azure.net"
 echo "Take note of the KeyVaultEncryptionKey: ENCRYPTION-KEY"
-echo "Take note of the ServicePrincipalCICD: http://"$ServicePrincipalCICD
-echo "Take note of the ServicePrincipalCICDPassword: "$ServicePrincipalCICDPassword
+echo "Take note of the ServicePrincipal: http://"$ServicePrincipal
+echo "Take note of the ServicePrincipalPassword: "$SP_APP_PASSWORD
 echo ""
 echo "****************************CALL TO ACTION****************************"
