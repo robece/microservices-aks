@@ -79,8 +79,6 @@ az aks create \
     --resource-group $ResourceGroupName \
     --node-count 1 \
     --kubernetes-version $AKSK8sVersion \
-    --service-principal $ServicePrincipalCICD \
-    --client-secret $ServicePrincipalCICDPassword \
     --generate-ssh-keys
 
 # update cluster
