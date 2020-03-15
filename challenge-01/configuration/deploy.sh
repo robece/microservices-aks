@@ -26,11 +26,27 @@ ServicePrincipalCICD=$DeploymentAlias"sp01"
 
 # PRINT
 echo "*******************************************"
-echo "   CREATING: AKS GENERAL RESOURCE GROUP"
+echo "   CREATING: GENERAL RESOURCE GROUP"
 echo "*******************************************"
 
 # create cluster resource group
 az group create --name $ResourceGroupName --location $Location
+
+# PRINT
+echo "*******************************************"
+echo "        CREATING: SERVICE PRINCIPAL"
+echo "*******************************************"
+
+echo "Creating service principal ..."
+az ad sp create-for-rbac -n $ServicePrincipalCICD
+
+# get appId
+SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
+echo "Service Principal AppId: "$SP_APP_ID
+
+# updating password
+SP_APP_PASSWORD=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
+echo "Service Principal Password: "$SP_APP_PASSWORD
 
 # PRINT
 echo "*******************************************"
@@ -43,27 +59,9 @@ az acr create -n $ContainerRegistryName -g $ResourceGroupName --sku basic --admi
 # get container registry id
 ContainerRegistryId=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
 
-# PRINT
-echo "*******************************************"
-echo "        CREATING: SERVICE PRINCIPAL"
-echo "*******************************************"
-
 # Get ACR ID 
 ACR_ID=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
 
-echo "Creating service principal ..."
-az ad sp create-for-rbac -n $ServicePrincipalCICD --skip-assignment
-
-#Get appId
-SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
-
-echo "Service Principal AppId: "$SP_APP_ID
-read -p "Introduce the Service Principal Password: " ServicePrincipalCICDPassword
-
-#echo "Updating password ..."
-#ServicePrincipalCICDPassword=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
-
-echo "Assignning contributor role ..." 
 # Need to wait a couple seconds to SP propagate around the services
 az role assignment create --assignee $SP_APP_ID --scope $ACR_ID --role "Contributor"
 
@@ -78,8 +76,8 @@ az aks create \
     --resource-group $ResourceGroupName \
     --node-count 1 \
     --kubernetes-version $AKSK8sVersion \
-    --service-principal $ServicePrincipalCICD \
-    --client-secret $ServicePrincipalCICDPassword \
+    --service-principal $SP_APP_ID \
+    --client-secret $SP_APP_PASSWORD \
     --generate-ssh-keys
 
 # update cluster
