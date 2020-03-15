@@ -5,18 +5,17 @@ clear
 
 read -p "Introduce a lowercase unique alias for your deployment (max length suggested of 6 chars): " DeploymentAlias
 read -p "Introduce your email address in lowercase for your deployment: " EmailAddress
-RandomId=$(echo $(( ( RANDOM % 99 )  + 1 )))
 ResourceGroupName=$DeploymentAlias"-microservices-aks-c01"
 Location="westus2"
-AKSClusterName=$DeploymentAlias"aks"$RandomId
+AKSClusterName=$DeploymentAlias"aks01"
 AKSK8sVersion="1.14.8"
-ContainerRegistryName=$DeploymentAlias"cr"$RandomId
-CosmosDBAccountName=$DeploymentAlias"cos"$RandomId
-CosmosDBDatabaseName=$DeploymentAlias"db"$RandomId
-KeyVaultAccountName=$DeploymentAlias"kv"$RandomId
+ContainerRegistryName=$DeploymentAlias"cr01"
+CosmosDBAccountName=$DeploymentAlias"cos01"
+CosmosDBDatabaseName=$DeploymentAlias"db01"
+KeyVaultAccountName=$DeploymentAlias"kv01"
 KeyVaultClientSecretPassword="33CD7FE44B9BD2070EF8356F069A464!"
 KeyVaultEncryptionKey="88CD7FE44B9BD2070EF8356F069A4647"
-SendGridAccountName=$DeploymentAlias"sg"$RandomId
+SendGridAccountName=$DeploymentAlias"sg01"
 SendGridPassword="33CD7FE44B9BD2070EF8356F069A464!"
 SendGridEmailCreator=$EmailAddress
 SendGridFirstnameCreator="guest"
@@ -30,7 +29,6 @@ echo "*******************************************"
 echo "        CREATING: SERVICE PRINCIPAL"
 echo "*******************************************"
 
-echo "Creating service principal ..."
 az ad sp create-for-rbac -n $ServicePrincipal
 
 # get app id
