@@ -5,24 +5,25 @@ clear
 
 read -p "Introduce a lowercase unique alias for your deployment (max length suggested of 6 chars): " DeploymentAlias
 read -p "Introduce your email address in lowercase for your deployment: " EmailAddress
-ResourceGroupName=$DeploymentAlias"-workshop"
+RandomId=$[ ( $RANDOM % 99 )  + 1 ]
+ResourceGroupName=$DeploymentAlias"-microservices-aks-c01"
 Location="westus2"
-AKSClusterName=$DeploymentAlias"aks01"
+AKSClusterName=$DeploymentAlias"aks"$RandomId
 AKSK8sVersion="1.14.8"
-ContainerRegistryName=$DeploymentAlias"cr01"
-CosmosDBAccountName=$DeploymentAlias"cos01"
-CosmosDBDatabaseName=$DeploymentAlias"cos01db01"
-KeyVaultAccountName=$DeploymentAlias"kv01"
+ContainerRegistryName=$DeploymentAlias"cr"$RandomId
+CosmosDBAccountName=$DeploymentAlias"cos"$RandomId
+CosmosDBDatabaseName=$DeploymentAlias"db"$RandomId
+KeyVaultAccountName=$DeploymentAlias"kv"$RandomId
 KeyVaultClientSecretPassword="33CD7FE44B9BD2070EF8356F069A464!"
 KeyVaultEncryptionKey="88CD7FE44B9BD2070EF8356F069A4647"
-SendGridAccountName=$DeploymentAlias"sg01"
+SendGridAccountName=$DeploymentAlias"sg"$RandomId
 SendGridPassword="33CD7FE44B9BD2070EF8356F069A464!"
 SendGridEmailCreator=$EmailAddress
 SendGridFirstnameCreator="guest"
 SendGridLastnameCreator="guest"
 SendGridCompanyCreator="guest"
 SendGridWebsiteCreator="http://guest.com"
-ServicePrincipal=$DeploymentAlias"sp01"
+ServicePrincipal=$DeploymentAlias"-microservices-aks-c01-sp"
 
 # PRINT
 echo "*******************************************"
