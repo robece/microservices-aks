@@ -52,17 +52,16 @@ echo "*******************************************"
 ACR_ID=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
 
 echo "Creating service principal ..."
-az ad sp create-for-rbac -n $ServicePrincipalCICD
-
-sleep 1m
-
-echo "Updating password ..."
-ServicePrincipalCICDPassword=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
-
-sleep 1m
+az ad sp create-for-rbac -n $ServicePrincipalCICD --skip-assignment
 
 #Get appId
 SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
+
+echo "Service Principal AppId: "$SP_APP_ID
+read -p "Introduce the Service Principal Password: " ServicePrincipalCICDPassword
+
+#echo "Updating password ..."
+#ServicePrincipalCICDPassword=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
 
 echo "Assignning contributor role ..." 
 # Need to wait a couple seconds to SP propagate around the services
@@ -79,6 +78,8 @@ az aks create \
     --resource-group $ResourceGroupName \
     --node-count 1 \
     --kubernetes-version $AKSK8sVersion \
+    --service-principal $ServicePrincipalCICD \
+    --client-secret $ServicePrincipalCICDPassword \
     --generate-ssh-keys
 
 # update cluster
