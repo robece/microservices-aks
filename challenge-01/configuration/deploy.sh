@@ -51,11 +51,12 @@ echo "*******************************************"
 # Get ACR ID 
 ACR_ID=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
 
-echo "Creating Service Principal ..."
-az ad sp create-for-rbac -n $ServicePrincipalCICD --skip-assignment
+echo "Creating service principal ..."
+az ad sp create-for-rbac -n $ServicePrincipalCICD
 
 sleep 1m
 
+echo "Updating password ..."
 ServicePrincipalCICDPassword=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
 
 sleep 1m
@@ -63,7 +64,7 @@ sleep 1m
 #Get appId
 SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
 
-echo "Assignning Contributor role ..." 
+echo "Assignning contributor role ..." 
 # Need to wait a couple seconds to SP propagate around the services
 az role assignment create --assignee $SP_APP_ID --scope $ACR_ID --role "Contributor"
 
