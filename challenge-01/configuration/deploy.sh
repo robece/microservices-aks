@@ -26,27 +26,33 @@ ServicePrincipalCICD=$DeploymentAlias"sp01"
 
 # PRINT
 echo "*******************************************"
-echo "   CREATING: GENERAL RESOURCE GROUP"
-echo "*******************************************"
-
-# create cluster resource group
-az group create --name $ResourceGroupName --location $Location
-
-# PRINT
-echo "*******************************************"
 echo "        CREATING: SERVICE PRINCIPAL"
 echo "*******************************************"
 
 echo "Creating service principal ..."
 az ad sp create-for-rbac -n $ServicePrincipalCICD
 
-# get appId
+# get app id
 SP_APP_ID=$(az ad sp show --id http://$ServicePrincipalCICD --query appId -o tsv)
 echo "Service Principal AppId: "$SP_APP_ID
 
 # updating password
 SP_APP_PASSWORD=$(az ad sp credential reset --name $ServicePrincipalCICD --query password -o tsv)
 echo "Service Principal Password: "$SP_APP_PASSWORD
+
+# PRINT
+echo "*******************************************"
+echo "   CREATING: GENERAL RESOURCE GROUP"
+echo "*******************************************"
+
+# create cluster resource group
+az group create --name $ResourceGroupName --location $Location
+
+# get group id
+GROUP_ID=$(az group show -n $ResourceGroupName --query id -o tsv)
+
+# role assignment 
+az role assignment create --assignee $SP_APP_ID --scope $GROUP_ID --role "Contributor"
 
 # PRINT
 echo "*******************************************"
@@ -59,10 +65,10 @@ az acr create -n $ContainerRegistryName -g $ResourceGroupName --sku basic --admi
 # get container registry id
 ContainerRegistryId=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
 
-# Get ACR ID 
+# get acr id 
 ACR_ID=$(az acr show -n $ContainerRegistryName -g $ResourceGroupName --query id -o tsv)
 
-# Need to wait a couple seconds to SP propagate around the services
+# role assignment 
 az role assignment create --assignee $SP_APP_ID --scope $ACR_ID --role "Contributor"
 
 # PRINT
