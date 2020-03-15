@@ -10,11 +10,11 @@ ResourceGroupName=$DeploymentAlias"-microservices-aks-c01"
 LOCATION=$(az group show -n $ResourceGroupName --query location -o tsv)
 ResourceNodeGroupName="MC_"$ResourceGroupName"_"$DeploymentAlias"aks01_"$LOCATION
 
-echo "Delete resource group "$ResourceGroupName 
+echo "Operation: Delete resource group "$ResourceGroupName 
 # delete delete general resource group
 az group delete -n $ResourceGroupName --no-wait
 
-echo "Delete resource group "$ResourceNodeGroupName
+echo "Operation: Delete resource group "$ResourceNodeGroupName
 # delete delete aks node group resource group
 az group delete -n $ResourceNodeGroupName --no-wait
 
