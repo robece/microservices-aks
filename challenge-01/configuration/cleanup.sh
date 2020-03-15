@@ -13,6 +13,7 @@ AKSResourceNodeGroupName="MC_"$ResourceGroupName"_"$DeploymentAlias"aks01_"$LOCA
 # delete delete general resource group
 az group delete -n $ResourceGroupName --no-wait
 
+echo $AKSResourceNodeGroupName
 # delete delete aks node group resource group
 az group delete -n $AKSResourceNodeGroupName --no-wait
 
