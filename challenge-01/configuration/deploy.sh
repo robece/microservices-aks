@@ -22,7 +22,7 @@ SendGridFirstnameCreator="guest"
 SendGridLastnameCreator="guest"
 SendGridCompanyCreator="guest"
 SendGridWebsiteCreator="http://guest.com"
-ServicePrincipalCICD=$DeploymentAlias"SP"
+ServicePrincipalCICD=$DeploymentAlias"sp01"
 
 # PRINT
 echo "*******************************************"
