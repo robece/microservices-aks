@@ -15,3 +15,9 @@ az group delete -n $ResourceGroupName --no-wait
 
 # delete delete aks node group resource group
 az group delete -n $AKSResourceNodeGroupName --no-wait
+
+# get service principal
+SP_APP_ID=$(az ad sp show --id http://$ResourceGroupName"-sp" --query appId -o tsv)
+
+# delete service principal
+az ad sp delete --id $SP_APP_ID
